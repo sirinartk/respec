@@ -1,17 +1,16 @@
-import html from "hyperhtml";
+import html from "nanohtml";
 
 export default (items = []) => {
   return items.map(getItem);
 
   function getItem(p) {
-    const personName = [p.name]; // treated as opt-in HTML by hyperHTML
+    const personName = [p.name]; // treated as opt-in HTML by nanohtml
     const company = [p.company];
     const editorid = p.w3cid ? parseInt(p.w3cid, 10) : null;
     /** @type {HTMLElement} */
     const dd = html`
       <dd class="p-author h-card vcard" data-editor-id="${editorid}"></dd>
     `;
-    const span = document.createDocumentFragment();
     const contents = [];
     if (p.mailto) {
       contents.push(html`
@@ -85,8 +84,7 @@ export default (items = []) => {
         contents.push(document.createTextNode(", "), result);
       }
     }
-    html.bind(span)`${contents}`;
-    dd.appendChild(span);
+    dd.append(...contents);
     return dd;
   }
 

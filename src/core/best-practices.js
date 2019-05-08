@@ -5,7 +5,7 @@
 // Best practices are marked up with span.practicelab.
 import { addId } from "./utils.js";
 import css from "text!../../assets/bp.css";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { pub } from "./pubsubhub.js";
 
 export const name = "core/best-practices";
@@ -17,22 +17,22 @@ export function run() {
   for (const bp of bps) {
     num++;
     const id = addId(bp, "bp");
-    const li = hyperHTML`<li><a href="${`#${id}`}">Best Practice ${num}</a>: ${
+    const li = nanohtml`<li><a href="${`#${id}`}">Best Practice ${num}</a>: ${
       bp.textContent
     }</li>`;
     ul.appendChild(li);
     ul.classList.add("practicebox");
-    const title = hyperHTML`<span class="practicetitle">Best Practice ${num}</span>: `;
+    const title = nanohtml`<span class="practicetitle">Best Practice ${num}</span>: `;
     bp.prepend(...title.childNodes);
   }
   const bpSummary = document.getElementById("bp-summary");
   if (bps.length) {
     document.head.insertBefore(
-      hyperHTML`<style>${[css]}</style>`,
+      nanohtml`<style>${[css]}</style>`,
       document.head.querySelector("link")
     );
     if (bpSummary) {
-      bpSummary.appendChild(hyperHTML`<h2>Best Practices Summary</h2>`);
+      bpSummary.appendChild(nanohtml`<h2>Best Practices Summary</h2>`);
       bpSummary.appendChild(ul);
     }
   } else if (bpSummary) {

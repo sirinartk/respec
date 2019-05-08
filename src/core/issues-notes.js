@@ -15,7 +15,7 @@ import { addId, joinAnd, parents } from "./utils.js";
 import css from "text!../../assets/issues-notes.css";
 import { lang as defaultLang } from "../core/l10n.js";
 import { fetchAndStoreGithubIssues } from "./github-api.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { pub } from "./pubsubhub.js";
 
 /**
@@ -76,9 +76,9 @@ function handleIssues(ins, ghIssues, conf) {
     if (!isInline) {
       const cssClass = isFeatureAtRisk ? `${type} atrisk` : type;
       const ariaRole = type === "note" ? "note" : null;
-      const div = hyperHTML`<div class="${cssClass}" role="${ariaRole}"></div>`;
+      const div = nanohtml`<div class="${cssClass}" role="${ariaRole}"></div>`;
       const title = document.createElement("span");
-      const titleParent = hyperHTML`
+      const titleParent = nanohtml`
         <div role='heading' class='${`${type}-title marker`}'>${title}</div>`;
       addId(titleParent, "h", type);
       let text = displayType;
@@ -139,7 +139,7 @@ function handleIssues(ins, ghIssues, conf) {
       }
       div.append(titleParent, body);
       const level = parents(titleParent, "section").length + 2;
-      titleParent.setAttribute("aria-level", level);
+      titleParent.setAttribute("aria-level", String(level));
     }
     pub(report.type, report);
   });
@@ -183,9 +183,9 @@ function getIssueType(inno, conf) {
 function linkToIssueTracker(dataNum, conf, { isFeatureAtRisk = false } = {}) {
   // Set issueBase to cause issue to be linked to the external issue tracker
   if (!isFeatureAtRisk && conf.issueBase) {
-    return hyperHTML`<a href='${conf.issueBase + dataNum}'/>`;
+    return nanohtml`<a href='${conf.issueBase + dataNum}'/>`;
   } else if (isFeatureAtRisk && conf.atRiskBase) {
-    return hyperHTML`<a href='${conf.atRiskBase + dataNum}'/>`;
+    return nanohtml`<a href='${conf.atRiskBase + dataNum}'/>`;
   }
 }
 
@@ -196,9 +196,9 @@ function linkToIssueTracker(dataNum, conf, { isFeatureAtRisk = false } = {}) {
 function createIssueSummaryEntry(l10nIssue, report, id) {
   const issueNumberText = `${l10nIssue} ${report.number}`;
   const title = report.title
-    ? hyperHTML`<span style="text-transform: none">: ${report.title}</span>`
+    ? nanohtml`<span style="text-transform: none">: ${report.title}</span>`
     : "";
-  return hyperHTML`
+  return nanohtml`
     <li><a href="${`#${id}`}">${issueNumberText}</a>${title}</li>
   `;
 }
@@ -214,7 +214,7 @@ function makeIssueSectionSummary(issueList) {
 
   issueList.hasChildNodes()
     ? issueSummaryElement.append(issueList)
-    : issueSummaryElement.append(hyperHTML`<p>${l10n.no_issues_in_spec}</p>`);
+    : issueSummaryElement.append(nanohtml`<p>${l10n.no_issues_in_spec}</p>`);
   if (
     !heading ||
     (heading && heading !== issueSummaryElement.firstElementChild)
@@ -240,6 +240,7 @@ function isLight(rgb) {
  * @param {string} repoURL
  */
 function createLabelsGroup(labels, title, repoURL) {
+  /** @type {Node[]} */
   const labelsGroup = labels.map(label => createLabel(label, repoURL));
   const labelNames = labels.map(label => label.name);
   const joinedNames = joinAnd(labelNames);
@@ -248,11 +249,11 @@ function createLabelsGroup(labels, title, repoURL) {
   }
   if (labelNames.length) {
     const ariaLabel = `This issue is labelled as ${joinedNames}.`;
-    return hyperHTML`<span
+    return nanohtml`<span
       class="issue-label"
       aria-label="${ariaLabel}">: ${title}${labelsGroup}</span>`;
   }
-  return hyperHTML`<span class="issue-label">: ${title}${labelsGroup}</span>`;
+  return nanohtml`<span class="issue-label">: ${title}${labelsGroup}</span>`;
 }
 
 /**
@@ -267,7 +268,7 @@ function createLabel(label, repoURL) {
   const textColorClass = isNaN(rgb) || isLight(rgb) ? "light" : "dark";
   const cssClasses = `respec-gh-label respec-label-${textColorClass}`;
   const style = `background-color: #${color}`;
-  return hyperHTML`<a
+  return nanohtml`<a
     class="${cssClasses}"
     style="${style}"
     href="${issuesURL.href}">${name}</a>`;
@@ -286,7 +287,7 @@ export async function run(conf) {
     : new Map();
   const { head: headElem } = document;
   headElem.insertBefore(
-    hyperHTML`<style>${[css]}</style>`,
+    nanohtml`<style>${[css]}</style>`,
     headElem.querySelector("link")
   );
   handleIssues(issuesAndNotes, ghIssues, conf);

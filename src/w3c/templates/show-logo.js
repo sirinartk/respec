@@ -1,5 +1,5 @@
 // @ts-check
-import html from "hyperhtml";
+import html from "nanohtml";
 import { showInlineWarning } from "../../core/utils.js";
 
 export default obj => {
@@ -20,7 +20,7 @@ export default obj => {
     />
   `;
   // avoid triggering 404 requests from dynamically generated
-  // hyperHTML attribute values
+  // nanohtml attribute values
   img.src = obj.src;
   a.append(img);
   return a;

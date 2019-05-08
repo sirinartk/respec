@@ -1,7 +1,7 @@
 // @ts-check
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { pub } from "../../core/pubsubhub.js";
-const html = hyperHTML;
+const html = nanohtml;
 
 export default link => {
   if (!link.key) {

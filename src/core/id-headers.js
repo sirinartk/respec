@@ -4,7 +4,7 @@
 
 export const name = "core/id-headers";
 import { addId } from "./utils.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 
 export function run(conf) {
   const headings = document.querySelectorAll(
@@ -14,7 +14,7 @@ export function run(conf) {
     addId(h);
     if (!conf.addSectionLinks) return;
     const id = h.parentElement.id || h.id;
-    h.appendChild(hyperHTML`
+    h.appendChild(nanohtml`
       <a href="${`#${id}`}" class="self-link" aria-label="§"></a>
     `);
   }

@@ -10,7 +10,7 @@
 //  - once we have something decent, merge, ship as 3.2.0
 
 import css from "text!../../assets/ui.css";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { markdownToHtml } from "./markdown.js";
 import shortcut from "../shortcut.js";
 import { sub } from "./pubsubhub.js";
@@ -34,8 +34,8 @@ function ariaDecorate(elem, ariaMap) {
   }, elem);
 }
 
-const respecUI = hyperHTML`<div id='respec-ui' class='removeOnSave' hidden></div>`;
-const menu = hyperHTML`<ul id=respec-menu role=menu aria-labelledby='respec-pill' hidden></ul>`;
+const respecUI = nanohtml`<div id='respec-ui' class='removeOnSave' hidden></div>`;
+const menu = nanohtml`<ul id=respec-menu role=menu aria-labelledby='respec-pill' hidden></ul>`;
 let modal;
 let overlay;
 const errors = [];
@@ -45,7 +45,7 @@ const buttons = {};
 sub("start-all", () => document.body.prepend(respecUI), { once: true });
 sub("end-all", () => document.body.prepend(respecUI), { once: true });
 
-const respecPill = hyperHTML`<button id='respec-pill' disabled>ReSpec</button>`;
+const respecPill = nanohtml`<button id='respec-pill' disabled>ReSpec</button>`;
 respecUI.appendChild(respecPill);
 respecPill.addEventListener("click", function(e) {
   e.stopPropagation();
@@ -87,10 +87,10 @@ function errWarn(msg, arr, butName, title) {
 
 function createWarnButton(butName, arr, title) {
   const buttonId = `respec-pill-${butName}`;
-  const button = hyperHTML`<button id='${buttonId}' class='respec-info-button'>`;
+  const button = nanohtml`<button id='${buttonId}' class='respec-info-button'>`;
   button.addEventListener("click", function() {
     this.setAttribute("aria-expanded", "true");
-    const ol = hyperHTML`<ol class='${`respec-${butName}-list`}'></ol>`;
+    const ol = nanohtml`<ol class='${`respec-${butName}-list`}'></ol>`;
     for (const err of arr) {
       const fragment = document
         .createRange()
@@ -134,10 +134,10 @@ export const ui = {
   addCommand(label, handler, keyShort, icon) {
     icon = icon || "";
     const id = `respec-button-${label.toLowerCase().replace(/\s+/, "-")}`;
-    const button = hyperHTML`<button id="${id}" class="respec-option" title="${keyShort}">
+    const button = nanohtml`<button id="${id}" class="respec-option" title="${keyShort}">
       <span class="respec-cmd-icon">${icon}</span> ${label}…
     </button>`;
-    const menuItem = hyperHTML`<li role=menuitem>${button}</li>`;
+    const menuItem = nanohtml`<li role=menuitem>${button}</li>`;
     menuItem.addEventListener("click", handler);
     menu.appendChild(menuItem);
     if (keyShort) shortcut.add(keyShort, handler);
@@ -168,10 +168,10 @@ export const ui = {
   freshModal(title, content, currentOwner) {
     if (modal) modal.remove();
     if (overlay) overlay.remove();
-    overlay = hyperHTML`<div id='respec-overlay' class='removeOnSave'></div>`;
+    overlay = nanohtml`<div id='respec-overlay' class='removeOnSave'></div>`;
     const id = `${currentOwner.id}-modal`;
     const headingId = `${id}-heading`;
-    modal = hyperHTML`<div id='${id}' class='respec-modal removeOnSave' role='dialog'>
+    modal = nanohtml`<div id='${id}' class='respec-modal removeOnSave' role='dialog'>
       <h3 id="${headingId}">${title}</h3>
       <div class='inside'>${content}</div>
     </div>`;

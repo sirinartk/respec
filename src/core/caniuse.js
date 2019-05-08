@@ -7,7 +7,7 @@
 import { pub, sub } from "./pubsubhub.js";
 import caniuseCss from "text!../../assets/caniuse.css";
 import { createResourceHint } from "./utils.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 
 export const name = "core/caniuse";
 
@@ -64,7 +64,7 @@ export async function run(conf) {
   }
   const featureURL = `https://caniuse.com/#feat=${options.feature}`;
 
-  document.head.appendChild(hyperHTML`
+  document.head.appendChild(nanohtml`
     <style class="removeOnSave">${caniuseCss}</style>`);
 
   const headDlElem = document.querySelector(".head dl");
@@ -80,11 +80,11 @@ export async function run(conf) {
         `Couldn't find feature "${options.feature}" on caniuse.com? ` +
         "Please check the feature key on [caniuse.com](https://caniuse.com)";
       pub("error", msg);
-      content = hyperHTML`<a href="${featureURL}">caniuse.com</a>`;
+      content = nanohtml`<a href="${featureURL}">caniuse.com</a>`;
     }
     resolve(content);
   });
-  const definitionPair = hyperHTML`
+  const definitionPair = nanohtml`
     <dt class="caniuse-title">Browser support:</dt>
     <dd class="caniuse-stats">${{
       any: contentPromise,
@@ -96,8 +96,9 @@ export async function run(conf) {
   // remove from export
   pub("amend-user-config", { caniuse: options.feature });
   sub("beforesave", outputDoc => {
-    hyperHTML.bind(outputDoc.querySelector(".caniuse-stats"))`
-      <a href="${featureURL}">caniuse.com</a>`;
+    const stats = outputDoc.querySelector(".caniuse-stats");
+    stats.textContent = "";
+    stats.append(nanohtml`<a href="${featureURL}">caniuse.com</a>`);
   });
 }
 
@@ -153,7 +154,7 @@ async function fetchStats(apiURL, options) {
  */
 function createTableHTML(featureURL, stats) {
   // render the support table
-  return hyperHTML`
+  return nanohtml`
     ${Object.entries(stats).map(addBrowser)}
     <a href="${featureURL}"
       title="Get details at caniuse.com">More info
@@ -180,7 +181,7 @@ function addBrowser([browserName, browserData]) {
   const addLatestVersion = ([version, supportKeys]) => {
     const { className, title } = getSupport(supportKeys);
     const buttonText = `${BROWSERS.get(browserName) || browserName} ${version}`;
-    return hyperHTML`
+    return nanohtml`
       <button class="${className}" title="${title}">${buttonText}</button>`;
   };
 
@@ -191,7 +192,7 @@ function addBrowser([browserName, browserData]) {
   };
 
   const [latestVersion, ...olderVersions] = browserData;
-  return hyperHTML`
+  return nanohtml`
     <div class="caniuse-browser">
       ${addLatestVersion(latestVersion)}
       <ul>

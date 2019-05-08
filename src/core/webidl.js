@@ -8,7 +8,7 @@ import * as webidl2 from "webidl2";
 import css from "text!../../assets/webidl.css";
 import { findDfn } from "./dfn-finder.js";
 import { flatten } from "./utils.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { pub } from "./pubsubhub.js";
 import { registerDefinition } from "./dfn-map.js";
 
@@ -100,27 +100,27 @@ function makeMarkup(parse, { suppressWarnings } = {}) {
       if (!t.trim()) {
         return t;
       }
-      return hyperHTML`<span class='idlSectionComment'>${t}</span>`;
+      return nanohtml`<span class='idlSectionComment'>${t}</span>`;
     },
     generic(wrapped) {
       if (standardTypes.has(wrapped)) {
-        return hyperHTML`<a data-cite='${standardTypes.get(
+        return nanohtml`<a data-cite='${standardTypes.get(
           wrapped
         )}'>${wrapped}</a>`;
       }
-      return hyperHTML`<a data-link-for="">${wrapped}</a>`;
+      return nanohtml`<a data-link-for="">${wrapped}</a>`;
     },
     reference(wrapped, name) {
       if (standardTypes.has(name)) {
-        return hyperHTML`<a data-cite='${standardTypes.get(
+        return nanohtml`<a data-cite='${standardTypes.get(
           name
         )}'>${wrapped}</a>`;
       }
-      return hyperHTML`<a data-link-for="">${wrapped}</a>`;
+      return nanohtml`<a data-link-for="">${wrapped}</a>`;
     },
     name(escaped, { data, parent }) {
       if (data.idlType && data.idlType.type === "argument-type") {
-        return hyperHTML`<span class="idlParamName">${escaped}</span>`;
+        return nanohtml`<span class="idlParamName">${escaped}</span>`;
       }
       const parentName = parent ? parent.name : "";
       const { name } = getNameAndId(data, parentName);
@@ -133,30 +133,30 @@ function makeMarkup(parse, { suppressWarnings } = {}) {
       if (data.type === "enum-value") {
         return idlAnchor;
       }
-      return hyperHTML`<span class="${className}">${idlAnchor}</span>`;
+      return nanohtml`<span class="${className}">${idlAnchor}</span>`;
     },
-    type: contents => hyperHTML`<span class="idlType">${contents}</span>`,
+    type: contents => nanohtml`<span class="idlType">${contents}</span>`,
     inheritance: contents =>
-      hyperHTML`<span class="idlSuperclass">${contents}</span>`,
+      nanohtml`<span class="idlSuperclass">${contents}</span>`,
     definition: createIdlElement,
     extendedAttribute: contents =>
-      hyperHTML`<span class="extAttr">${contents}</span>`,
+      nanohtml`<span class="extAttr">${contents}</span>`,
     extendedAttributeReference(name) {
       if (!extendedAttributesLinks.has(name)) {
-        return hyperHTML`<a>${name}</a>`;
+        return nanohtml`<a>${name}</a>`;
       }
-      return hyperHTML`<a data-cite="${extendedAttributesLinks.get(
+      return nanohtml`<a data-cite="${extendedAttributesLinks.get(
         name
       )}">${name}</a>`;
     },
   };
   const result = webidl2.write(parse, { templates });
-  return hyperHTML`<pre class="def idl">${result}</pre>`;
+  return nanohtml`<pre class="def idl">${result}</pre>`;
 }
 
 function createIdlAnchor(escaped, data, parentName, dfn) {
   if (dfn) {
-    return hyperHTML`<a data-link-for="${parentName.toLowerCase()}" data-lt="${dfn
+    return nanohtml`<a data-link-for="${parentName.toLowerCase()}" data-lt="${dfn
       .dataset.lt || ""}">${escaped}</a>`;
   }
   const isDefaultJSON =
@@ -165,7 +165,7 @@ function createIdlAnchor(escaped, data, parentName, dfn) {
     data.extAttrs &&
     data.extAttrs.items.some(({ name }) => name === "Default");
   if (isDefaultJSON) {
-    return hyperHTML`<a data-cite="WEBIDL#default-tojson-operation">${escaped}</a>`;
+    return nanohtml`<a data-cite="WEBIDL#default-tojson-operation">${escaped}</a>`;
   }
   return escaped;
 }
@@ -175,11 +175,11 @@ function createIdlElement(contents, { data, parent }) {
   switch (data.type) {
     case "includes":
     case "enum-value":
-      return hyperHTML`<span class='${className}'>${contents}</span>`;
+      return nanohtml`<span class='${className}'>${contents}</span>`;
   }
   const parentName = parent ? parent.name : "";
   const { name, idlId } = getNameAndId(data, parentName);
-  return hyperHTML`<span class='${className}' id='${idlId}' data-idl data-title='${name}'>${contents}</span>`;
+  return nanohtml`<span class='${className}' id='${idlId}' data-idl data-title='${name}'>${contents}</span>`;
 }
 
 function getIdlDefinitionClassName(defn) {

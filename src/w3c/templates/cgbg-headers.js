@@ -1,5 +1,5 @@
 // @ts-check
-import html from "hyperhtml";
+import html from "nanohtml";
 import showLink from "./show-link.js";
 import showLogo from "./show-logo.js";
 import showPeople from "./show-people.js";

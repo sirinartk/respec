@@ -60,3 +60,7 @@ module "core/xref" {
     query?: RequestEntry[];
   }
 }
+
+declare module "nanohtml" {
+  export default function<T extends HTMLElement = HTMLElement>(strings: TemplateStringsArray, ...keys: any[]): T;
+}

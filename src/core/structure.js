@@ -12,7 +12,7 @@
 
 import { addId, children, parents, renameElement } from "./utils.js";
 import { lang as defaultLang } from "../core/l10n.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 
 const lowerHeaderTags = ["h2", "h3", "h4", "h5", "h6"];
 const headerTags = ["h1", ...lowerHeaderTags];
@@ -54,7 +54,7 @@ function scanSections(sections, maxTocLevel, { prefix = "" } = {}) {
     return null;
   }
   /** @type {HTMLElement} */
-  const ol = hyperHTML`<ol class='toc'>`;
+  const ol = nanohtml`<ol class='toc'>`;
   for (const section of sections) {
     if (section.isAppendix && !prefix && !appendixMode) {
       lastNonAppendix = index;
@@ -76,7 +76,7 @@ function scanSections(sections, maxTocLevel, { prefix = "" } = {}) {
 
     if (!section.isIntro) {
       index += 1;
-      section.header.prepend(hyperHTML`<bdi class='secno'>${secno} </bdi>`);
+      section.header.prepend(nanohtml`<bdi class='secno'>${secno} </bdi>`);
     }
 
     if (level <= maxTocLevel) {
@@ -134,10 +134,10 @@ function getSectionTree(parent, { tocIntroductory = false } = {}) {
  * @param {string} id
  */
 function createTocListItem(header, id) {
-  const anchor = hyperHTML`<a href="${`#${id}`}" class="tocxref"/>`;
+  const anchor = nanohtml`<a href="${`#${id}`}" class="tocxref"/>`;
   anchor.append(...header.cloneNode(true).childNodes);
   filterHeader(anchor);
-  return hyperHTML`<li class='tocline'>${anchor}</li>`;
+  return nanohtml`<li class='tocline'>${anchor}</li>`;
 }
 
 /**
@@ -208,8 +208,8 @@ function createTableOfContents(ol) {
   if (!ol) {
     return;
   }
-  const nav = hyperHTML`<nav id="toc">`;
-  const h2 = hyperHTML`<h2 class="introductory">${l10n.toc}</h2>`;
+  const nav = nanohtml`<nav id="toc">`;
+  const h2 = nanohtml`<h2 class="introductory">${l10n.toc}</h2>`;
   addId(h2);
   nav.append(h2, ol);
   const ref =
@@ -224,6 +224,6 @@ function createTableOfContents(ol) {
     }
   }
 
-  const link = hyperHTML`<p role='navigation' id='back-to-top'><a href='#title'><abbr title='Back to Top'>&uarr;</abbr></a></p>`;
+  const link = nanohtml`<p role='navigation' id='back-to-top'><a href='#title'><abbr title='Back to Top'>&uarr;</abbr></a></p>`;
   document.body.append(link);
 }

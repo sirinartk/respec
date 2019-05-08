@@ -13,7 +13,7 @@ import {
   showInlineError,
   showInlineWarning,
 } from "./utils.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { idlStringToHtml } from "./inline-idl-parser.js";
 import { renderInlineCitation } from "./render-biblio.js";
 
@@ -36,7 +36,7 @@ const inlineAnchor = /(?:\[=[^=]+=\])/; // Inline [= For/link =]
  */
 function inlineRFC2119Matches(matched) {
   const normalize = matched.split(/\s+/).join(" ");
-  const nodeElement = hyperHTML`<em class="rfc2119" title="${normalize}">${normalize}</em>`;
+  const nodeElement = nanohtml`<em class="rfc2119" title="${normalize}">${normalize}</em>`;
   // remember which ones were used
   rfc2119Usage[normalize] = true;
   return nodeElement;
@@ -50,12 +50,12 @@ function inlineRefMatches(matched) {
   // slices "[[[" at the beginning and "]]]" at the end
   const ref = matched.slice(3, -3).trim();
   if (!ref.startsWith("#")) {
-    return hyperHTML`<a data-cite="${ref}"></a>`;
+    return nanohtml`<a data-cite="${ref}"></a>`;
   }
   if (document.querySelector(ref)) {
-    return hyperHTML`<a href="${ref}"></a>`;
+    return nanohtml`<a href="${ref}"></a>`;
   }
-  const badReference = hyperHTML`<span>${matched}</span>`;
+  const badReference = nanohtml`<span>${matched}</span>`;
   showInlineError(
     badReference, // cite element
     `Wasn't able to expand ${matched} as it didn't match any id in the document.`,
@@ -114,7 +114,7 @@ function inlineBibrefMatches(matched, txt, conf) {
 function inlineAbbrMatches(matched, txt, abbrMap) {
   return txt.parentElement.tagName === "ABBR"
     ? matched
-    : hyperHTML`<abbr title="${abbrMap.get(matched)}">${matched}</abbr>`;
+    : nanohtml`<abbr title="${abbrMap.get(matched)}">${matched}</abbr>`;
 }
 
 /**
@@ -126,7 +126,7 @@ function inlineVariableMatches(matched) {
   // remove "|" at the beginning and at the end, then split at an optional `:`
   const matches = matched.slice(1, -1).split(":", 2);
   const [varName, type] = matches.map(s => s.trim());
-  return hyperHTML`<var data-type="${type}">${varName}</var>`;
+  return nanohtml`<var data-type="${type}">${varName}</var>`;
 }
 
 function inlineLinkMatches(matched) {
@@ -136,12 +136,12 @@ function inlineLinkMatches(matched) {
     .map(s => s.trim());
   const [isFor, content] = parts.length === 2 ? parts : ["", parts[0]];
   const processedContent = processInlineContent(content);
-  return hyperHTML`<a data-link-for="${isFor}" data-xref-for="${isFor}">${processedContent}</a>`;
+  return nanohtml`<a data-link-for="${isFor}" data-xref-for="${isFor}">${processedContent}</a>`;
 }
 
 function inlineCodeMatches(matched) {
   const clean = matched.slice(1, -1); // Chop ` and `
-  return hyperHTML`<code>${clean}</code>`;
+  return nanohtml`<code>${clean}</code>`;
 }
 
 function processInlineContent(text) {

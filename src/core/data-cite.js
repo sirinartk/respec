@@ -16,7 +16,7 @@
  */
 import { biblio, resolveRef, updateFromNetwork } from "./biblio.js";
 import { refTypeFromContext, showInlineWarning, wrapInner } from "./utils.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 export const name = "core/data-cite";
 
 function requestLookup(conf) {
@@ -66,7 +66,7 @@ function requestLookup(conf) {
         break;
       }
       case "dfn": {
-        const anchor = hyperHTML`<a href="${href}">`;
+        const anchor = nanohtml`<a href="${href}">`;
         if (!elem.textContent) {
           anchor.textContent = title;
           elem.append(anchor);

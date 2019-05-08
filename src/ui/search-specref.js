@@ -1,7 +1,7 @@
 // Module ui/search-specref
 // Search Specref database
 import { l10n, lang } from "../core/l10n.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { ui } from "../core/ui.js";
 import { wireReference } from "../core/biblio.js";
 
@@ -15,8 +15,6 @@ const specrefURL = "https://specref.herokuapp.com/";
 const refSearchURL = `${specrefURL}search-refs`;
 const reveseLookupURL = `${specrefURL}reverse-lookup`;
 const form = document.createElement("form");
-const renderer = hyperHTML.bind(form);
-const resultList = hyperHTML.bind(document.createElement("div"));
 
 form.id = "specref-ui";
 
@@ -27,28 +25,32 @@ form.id = "specref-ui";
  */
 function renderResults(resultMap, query, timeTaken) {
   if (!resultMap.size) {
-    return resultList`
-      <p class="state">
-        Your search - <strong> ${query} </strong> -
-        did not match any references.
-      </p>
+    return nanohtml`
+      <div>
+        <p class="state">
+          Your search - <strong> ${query} </strong> -
+          did not match any references.
+        </p>
+      </div>
     `;
   }
   const wires = Array.from(resultMap)
     .slice(0, 99)
     .map(toDefinitionPair)
     .reduce((collector, pair) => collector.concat(pair), []);
-  return resultList`
-    <p class="result-stats">
-      ${resultMap.size} results (${timeTaken} seconds).
-      ${resultMap.size > 99 ? "First 100 results." : ""}
-    </p>
-    <dl class="specref-results">${wires}</dl>
+  return nanohtml`
+    <div>
+      <p class="result-stats">
+        ${resultMap.size} results (${timeTaken} seconds).
+        ${resultMap.size > 99 ? "First 100 results." : ""}
+      </p>
+      <dl class="specref-results">${wires}</dl>
+    </div>
   `;
 }
 
 function toDefinitionPair([key, entry]) {
-  return hyperHTML.wire(entry)`
+  return nanohtml`
     <dt>
       [${key}]
     </dt>
@@ -129,7 +131,7 @@ function show() {
   input.focus();
 }
 
-const mast = hyperHTML.wire()`
+const mast = nanohtml`
   <header>
     <p>
       An Open-Source, Community-Maintained Database of
@@ -158,10 +160,10 @@ const mast = hyperHTML.wire()`
  */
 function render({ state = "", results, timeTaken, query } = {}) {
   if (!results) {
-    renderer`<div>${mast}</div>`;
+    form.append(nanohtml`<div>${mast}</div>`);
     return;
   }
-  renderer`
+  form.append(nanohtml`
     <div>${mast}</div>
     <p class="state" hidden="${!state}">
       ${state}
@@ -169,5 +171,5 @@ function render({ state = "", results, timeTaken, query } = {}) {
     <section hidden="${!results}">${
     results ? renderResults(results, query, timeTaken) : []
   }</section>
-  `;
+  `);
 }

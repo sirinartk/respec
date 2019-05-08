@@ -6,7 +6,7 @@
 
 import { addId, renameElement, showInlineWarning, wrapInner } from "./utils.js";
 import { lang as defaultLang } from "../core/l10n.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 
 export const name = "core/figures";
 
@@ -51,8 +51,8 @@ export function run() {
   if (tof.length && tofElement) {
     decorateTableOfFigures(tofElement);
     tofElement.append(
-      hyperHTML`<h2>${l10n.list_of_figures}</h2>`,
-      hyperHTML`<ul class='tof'>${tof}</ul>`
+      nanohtml`<h2>${l10n.list_of_figures}</h2>`,
+      nanohtml`<ul class='tof'>${tof}</ul>`
     );
   }
 }
@@ -86,8 +86,8 @@ function decorateFigure(figure, caption, i) {
   const title = caption.textContent;
   addId(figure, "fig", title);
   // set proper caption title
-  wrapInner(caption, hyperHTML`<span class='fig-title'>`);
-  caption.prepend(l10n.fig, hyperHTML`<bdi class='figno'>${i + 1}</bdi>`, " ");
+  wrapInner(caption, nanohtml`<span class='fig-title'>`);
+  caption.prepend(l10n.fig, nanohtml`<bdi class='figno'>${i + 1}</bdi>`, " ");
 }
 
 /**
@@ -100,7 +100,7 @@ function getTableOfFiguresListItem(figureId, caption) {
   tofCaption.querySelectorAll("a").forEach(anchor => {
     renameElement(anchor, "span").removeAttribute("href");
   });
-  return hyperHTML`<li class='tofline'>
+  return nanohtml`<li class='tofline'>
     <a class='tocxref' href='${`#${figureId}`}'>${tofCaption.childNodes}</a>
   </li>`;
 }

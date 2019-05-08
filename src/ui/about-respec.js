@@ -1,13 +1,12 @@
 // Module ui/about-respec
 // A simple about dialog with pointer to the help
 import { l10n, lang } from "../core/l10n.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { ui } from "../core/ui.js";
 
 // window.respecVersion is added at build time (see tools/builder.js)
 window.respecVersion = window.respecVersion || "Developer Edition";
 const div = document.createElement("div");
-const render = hyperHTML.bind(div);
 const button = ui.addCommand(
   `About ${window.respecVersion}`,
   show,
@@ -40,7 +39,7 @@ function show() {
         return collector;
       }, entries);
   }
-  render`
+  div.append(nanohtml`
   <p>
     ReSpec is a document production toolchain, with a notable focus on W3C specifications.
   </p>
@@ -48,7 +47,7 @@ function show() {
     <a href='https://github.com/w3c/respec/wiki'>Documentation</a>,
     <a href='https://github.com/w3c/respec/issues'>Bugs</a>.
   </p>
-  <table border="1" width="100%" hidden="${entries.length ? false : true}">
+  <table border="1" width="100%" hidden="${!entries.length}">
     <caption>
       Loaded plugins
     </caption>
@@ -64,20 +63,21 @@ function show() {
     </thead>
     <tbody>${entries}</tbody>
   </table>
-`;
+`);
 }
 
 function perfEntryToTR({ name, duration }) {
-  const render = hyperHTML.bind(document.createElement("tr"));
   const moduleURL = `https://github.com/w3c/respec/tree/develop/src/${name}.js`;
-  return render`
-    <td>
-      <a href="${moduleURL}">
-        ${name}
-      </a>
-    </td>
-    <td>
-      ${duration} 
-    </td>
+  return nanohtml`
+    <tr>
+      <td>
+        <a href="${moduleURL}">
+          ${name}
+        </a>
+      </td>
+      <td>
+        ${duration} 
+      </td>
+    </tr>
   `;
 }

@@ -1,7 +1,7 @@
 // Parses an inline IDL string (`{{ idl string }}`)
 //  and renders its components as HTML
 
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { showInlineError } from "./utils";
 
 const methodRegex = /(\w+)\((.*)\)$/;
@@ -73,7 +73,7 @@ function parseInlineIDL(str) {
 function renderBase(details) {
   // Check if base is a local variable in a section
   const { identifier } = details;
-  return hyperHTML`<a data-xref-type="_IDL_">${identifier}</a>`;
+  return nanohtml`<a data-xref-type="_IDL_">${identifier}</a>`;
 }
 
 // Internal slot: .[[identifier]] or [[identifier]]
@@ -81,7 +81,7 @@ function renderInternalSlot(details) {
   const { identifier, parent } = details;
   const { identifier: linkFor } = parent || {};
   const lt = `[[${identifier}]]`;
-  const html = hyperHTML`${parent ? "." : ""}[[<a
+  const html = nanohtml`${parent ? "." : ""}[[<a
     data-xref-type="attribute"
     data-link-for=${linkFor}
     data-xref-for=${linkFor}
@@ -93,7 +93,7 @@ function renderInternalSlot(details) {
 function renderAttribute(details) {
   const { parent, identifier } = details;
   const { identifier: linkFor } = parent || {};
-  const html = hyperHTML`.<a
+  const html = nanohtml`.<a
       data-xref-type="attribute|dict-member"
       data-link-for="${linkFor}"
       data-xref-for="${linkFor}"
@@ -107,7 +107,7 @@ function renderMethod(details) {
   const { identifier: linkFor } = parent || {};
   const argsText = args.map(arg => `<var>${arg}</var>`).join(", ");
   const searchText = `${identifier}(${args.join(", ")})`;
-  const html = hyperHTML`${parent ? "." : ""}<a
+  const html = nanohtml`${parent ? "." : ""}<a
     data-xref-type="${type}"
     data-link-for="${linkFor}"
     data-xref-for="${linkFor}"
@@ -119,7 +119,7 @@ function renderMethod(details) {
 // Enum: Identifier["enum value"]
 function renderEnum(details) {
   const { identifier, enumValue } = details;
-  const html = hyperHTML`"<a
+  const html = nanohtml`"<a
     data-xref-type="enum-value"
     data-link-for="${identifier}"
     data-xref-for="${identifier}"
@@ -131,7 +131,7 @@ function renderEnum(details) {
 function renderEnumValue(details) {
   const { identifier } = details;
   const lt = identifier === "" ? "the-empty-string" : null;
-  const html = hyperHTML`"<a
+  const html = nanohtml`"<a
     data-xref-type="enum-value"
     data-lt="${lt}"
     >${identifier}</a>"`;
@@ -148,11 +148,10 @@ export function idlStringToHtml(str) {
   try {
     results = parseInlineIDL(str);
   } catch (error) {
-    const el = hyperHTML`<span>{{ ${str} }}</span>`;
+    const el = nanohtml`<span>{{ ${str} }}</span>`;
     showInlineError(el, error.message, "Error: Invalid inline IDL string");
     return el;
   }
-  const render = hyperHTML(document.createDocumentFragment());
   const output = [];
   for (const details of results) {
     switch (details.type) {
@@ -178,6 +177,5 @@ export function idlStringToHtml(str) {
         throw new Error("Unknown type.");
     }
   }
-  const result = render`<code>${output}</code>`;
-  return result;
+  return nanohtml`<code>${output}</code>`;
 }

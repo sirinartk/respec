@@ -7,7 +7,7 @@
  */
 
 import { expose } from "./expose-modules.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { pub } from "./pubsubhub.js";
 import { removeReSpec } from "./utils.js";
 
@@ -74,13 +74,13 @@ function cleanup(cloneDoc) {
     "meta[charset], meta[content*='charset=']"
   );
   if (!metaCharset) {
-    metaCharset = hyperHTML`<meta charset="utf-8">`;
+    metaCharset = nanohtml`<meta charset="utf-8">`;
   }
   insertions.appendChild(metaCharset);
 
   // Add meta generator
   const respecVersion = `ReSpec ${window.respecVersion || "Developer Channel"}`;
-  const metaGenerator = hyperHTML`
+  const metaGenerator = nanohtml`
     <meta name="generator" content="${respecVersion}">
   `;
 

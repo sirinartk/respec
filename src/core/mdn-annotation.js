@@ -1,5 +1,5 @@
 import { fetchAndCache } from "./utils";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import mdnCss from "text!../../assets/mdn-annotation.css";
 
 export const name = "core/mdn-annoatation";
@@ -43,7 +43,7 @@ function insertMDNBox(node) {
     // If the target ancestor already has a mdnBox inserted, we just use it
     return targetSibling;
   }
-  const mdnBox = hyperHTML`<aside class="mdn before wrapped"></aside>`;
+  const mdnBox = nanohtml`<aside class="mdn before wrapped"></aside>`;
   parentNode.insertBefore(mdnBox, targetAncestor);
   return mdnBox;
 }
@@ -52,10 +52,11 @@ function attachMDNDetail(container, mdnSpec) {
   const { slug, summary } = mdnSpec;
   container.innerHTML += `<button onclick="toggleMDNStatus(this.parentNode)" aria-label="Expand MDN details"><b>MDN</b></button>`;
   const mdnSubPath = slug.slice(slug.indexOf("/") + 1);
-  const mdnDetail = document.createElement("div");
   const href = `${MDN_URL_BASE}${slug}`;
-  hyperHTML(mdnDetail)`
+  const mdnDetail = nanohtml`
+    <div>
       <a title="${summary}" href="${href}">${mdnSubPath}</a>
+    </div>
   `;
   attachMDNBrowserSupport(mdnDetail, mdnSpec);
   container.appendChild(mdnDetail);
@@ -66,7 +67,7 @@ function attachMDNBrowserSupport(container, mdnSpec) {
     container.innerHTML += `<p class="nosupportdata">No support data.</p>`;
     return;
   }
-  const supportTable = hyperHTML`<p class="mdnsupport">
+  const supportTable = nanohtml`<p class="mdnsupport">
     ${[buildBrowserSupportTable(mdnSpec.support)]}
   </p>`;
   container.appendChild(supportTable);
@@ -138,8 +139,8 @@ export async function run(conf) {
     `${baseJsonPath}/${shortName}.json`,
     maxAge
   );
-  document.head.appendChild(hyperHTML`<style>${[mdnCss]}</style>`);
-  document.head.appendChild(hyperHTML`<script>
+  document.head.appendChild(nanohtml`<style>${[mdnCss]}</style>`);
+  document.head.appendChild(nanohtml`<script>
      function toggleMDNStatus(div) {
        div.parentNode.classList.toggle('wrapped');
      }

@@ -9,7 +9,7 @@
 import { addId } from "./utils.js";
 import css from "text!../../assets/examples.css";
 import { lang as defaultLang } from "../core/l10n.js";
-import html from "hyperhtml";
+import html from "nanohtml";
 import { pub } from "./pubsubhub.js";
 
 export const name = "core/examples";
@@ -96,6 +96,7 @@ export function run() {
         addId(example, `example`, String(number));
       }
       const { id } = example;
+      /** @type {HTMLAnchorElement} */
       const selfLink = div.querySelector("a.self-link");
       selfLink.href = `#${id}`;
       examplesMap.set(id, div.textContent.trim());
@@ -121,6 +122,7 @@ export function run() {
         addId(div, `example-${number}`, title);
       }
       addId(div, `example`, String(number));
+      /** @type {HTMLAnchorElement} */
       const selfLink = div.querySelector("a.self-link");
       selfLink.href = `#${div.id}`;
       example.replaceWith(div);

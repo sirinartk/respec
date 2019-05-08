@@ -1,7 +1,7 @@
 // Module core/informative
 // Mark specific sections as informative, based on CSS
 import { lang as defaultLang } from "../core/l10n.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 
 export const name = "core/informative";
 
@@ -23,6 +23,6 @@ export function run() {
     .map(informative => informative.querySelector("h2, h3, h4, h5, h6"))
     .filter(heading => heading)
     .forEach(heading => {
-      heading.after(hyperHTML`<p><em>${l10n.informative}</em></p>`);
+      heading.after(nanohtml`<p><em>${l10n.informative}</em></p>`);
     });
 }

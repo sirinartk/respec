@@ -1,4 +1,4 @@
-import html from "hyperhtml";
+import html from "nanohtml";
 
 export default (conf, opts) => {
   return html`

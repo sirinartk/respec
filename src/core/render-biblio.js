@@ -5,7 +5,7 @@
 import { addId } from "./utils.js";
 import { biblio } from "./biblio.js";
 import { lang as defaultLang } from "../core/l10n.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { pub } from "./pubsubhub.js";
 
 export const name = "core/render-biblio";
@@ -63,17 +63,17 @@ export function run(conf) {
 
   if (!informs.length && !norms.length && !conf.refNote) return;
 
-  const refsec = hyperHTML`
+  const refsec = nanohtml`
     <section id='references' class='appendix'>
       <h2>${l10n.references}</h2>
-      ${conf.refNote ? hyperHTML`<p>${conf.refNote}</p>` : ""}
+      ${conf.refNote ? nanohtml`<p>${conf.refNote}</p>` : ""}
     </section>`;
 
   for (const type of ["Normative", "Informative"]) {
     const refs = type === "Normative" ? norms : informs;
     if (!refs.length) continue;
 
-    const sec = hyperHTML`
+    const sec = nanohtml`
       <section>
         <h3>${
           type === "Normative" ? l10n.norm_references : l10n.info_references
@@ -109,7 +109,7 @@ export function run(conf) {
         a.ref.toLocaleLowerCase().localeCompare(b.ref.toLocaleLowerCase())
       );
 
-    sec.appendChild(hyperHTML`
+    sec.appendChild(nanohtml`
       <dl class='bibliography'>
         ${refsToShow.map(showRef)}
       </dl>`);
@@ -158,19 +158,19 @@ function toRefContent(ref) {
 export function renderInlineCitation(ref) {
   const key = ref.replace(/^(!|\?)/, "");
   const href = `#bib-${key.toLowerCase()}`;
-  return hyperHTML`[<cite><a class="bibref" href="${href}">${key}</a></cite>]`;
+  return nanohtml`[<cite><a class="bibref" href="${href}">${key}</a></cite>]`;
 }
 
 // renders a reference
 function showRef({ ref, refcontent }) {
   const refId = `bib-${ref.toLowerCase()}`;
   if (refcontent) {
-    return hyperHTML`
+    return nanohtml`
       <dt id="${refId}">[${ref}]</dt>
       <dd>${{ html: stringifyReference(refcontent) }}</dd>
     `;
   } else {
-    return hyperHTML`
+    return nanohtml`
       <dt id="${refId}">[${ref}]</dt>
       <dd><em class="respec-offending-element">Reference not found.</em></dd>
     `;
@@ -193,7 +193,7 @@ export function wireReference(rawRef, target = "_blank") {
   const ref = Object.assign({}, defaultsReference, rawRef);
   const authors = ref.authors.join("; ") + (ref.etAl ? " et al" : "");
   const status = REF_STATUSES.get(ref.status) || ref.status;
-  return hyperHTML.wire(ref)`
+  return nanohtml`
     <cite>
       <a
         href="${ref.href}"

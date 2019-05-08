@@ -10,7 +10,7 @@
  * Docs: https://github.com/w3c/respec/wiki/data-tests
  */
 import { lang as defaultLang } from "./l10n.js";
-import hyperHTML from "hyperhtml";
+import nanohtml from "nanohtml";
 import { pub } from "./pubsubhub.js";
 import { showInlineWarning } from "./utils.js";
 const l10n = {
@@ -63,10 +63,12 @@ function toListItem(href) {
     emojiList.push(manualPerformEmoji);
   }
 
-  const testList = hyperHTML.bind(document.createElement("li"))`
-    <a href="${href}">
-      ${testFileName}
-    </a> ${emojiList}
+  const testList = nanohtml`
+    <li>
+      <a href="${href}">
+        ${testFileName}
+      </a> ${emojiList}
+    </li>
   `;
   return testList;
 }
@@ -86,7 +88,6 @@ export function run(conf) {
     // Render details + ul, returns HTMLDetailsElement
     .map(elem => {
       const details = document.createElement("details");
-      const renderer = hyperHTML.bind(details);
       const testURLs = elem.dataset.tests
         .split(/,/gm)
         .map(url => url.trim())
@@ -113,12 +114,12 @@ export function run(conf) {
       }
       details.classList.add("respec-tests-details", "removeOnSave");
       const uniqueList = [...new Set(testURLs)];
-      renderer`
+      details.append(nanohtml`
         <summary>
           tests: ${uniqueList.length}
         </summary>
         <ul>${uniqueList.map(toListItem)}</ul>
-      `;
+      `);
       return { elem, details };
     })
     .forEach(({ elem, details }) => {
