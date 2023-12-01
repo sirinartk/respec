@@ -102,8 +102,8 @@
     "loading-indicator": "^2.0.0",
     "opencollective": "^1.0.3",
     "opencollective-postinstall": "^2.0.2",
-    "prompt": "^1.0.0",
-    "puppeteer": "^1.16.0"
+    "prompt": "^1.2.0",
+    "puppeteer": "^18.2.0"
   },
   "prettier": {
     "trailingComma": "es5"
